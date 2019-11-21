@@ -19,6 +19,7 @@
   "homepage": "https://github.com/1910javareact/project-0-danevosmeier#readme",
   "devDependencies": {
     "@types/express": "^4.17.2",
+    "@types/express-session": "^1.15.16",
     "nodemon": "^1.19.4",
     "ts-node": "^8.5.2",
     "typescript": "^3.7.2"

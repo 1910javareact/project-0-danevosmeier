@@ -63,6 +63,8 @@ The ReimbursementType model is used to track what kind of reimbursement is being
 
 # Endpoints
 
+## ## Todo
+
 ## Security
   Security should be handled through session storage.
   If a user does not have permission to access a particular endpoint it should return the following:
