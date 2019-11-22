@@ -1,5 +1,38 @@
 import {User} from "./models/user"
 
-export let users = [
-    //new User()
-]
+export let users:User[] = [{
+    userId: 1,
+        username: "Finance Manager",
+        password: "password",
+        firstName: "",
+        lastName: "",
+        email: "",
+    role:{
+        roleId: 1,
+        role:"Finance Manager",
+    }
+},
+{
+    userId: 2,
+        username: "Admin",
+        password: "password",
+        firstName: "",
+        lastName: "",
+        email: "",
+    role:{
+        roleId: 2,
+        role: "Admin"
+    }
+},
+{
+    userId: 3,
+        username: "User1",
+        password: "password",
+        firstName: "",
+        lastName: "",
+        email: "",
+    role:{
+        roleId: 3,
+        role: "User"
+    }
+}]

@@ -18,4 +18,5 @@ function controllerGetUsers(req, res){
 
 //fix to manager
 
-userRouter.get(``, [authorization(['Admin']), controllerGetUsers])
+userRouter.get(``, [authorization([1]), controllerGetUsers])
+
