@@ -1,13 +1,33 @@
-import { daoGetGardenByUsernameAndPassword, daoGetAllUsers } from "../repositories/user-dao";
+import * as userDao from "../repositories/user-dao";
 import { User } from "../models/user";
 
 
-export function getUserByUsernameAndPassword(username:string, password:string){
+export async function getUserByUsernameAndPassword(username:string, password:string){
     //add functionality
-    return daoGetGardenByUsernameAndPassword(username, password)
+    return userDao.daoGetUserByUsernameAndPassword(username, password)
 }
 
-export function getAllUsers():User[]{
+export async function getAllUsers():Promise<User[]>{
     //add functionality
-    return daoGetAllUsers()
+    return userDao.daoGetAllUsers()
+}
+
+export async function getUserById(id: number){
+    try{
+        return userDao.daoGetUserById(id)
+    }
+    catch(e){
+        throw e
+    }
+}
+
+export async function updateUser(req: User){
+    let user = userDao.daoGetUserById(req.userId)
+
+    for(let key in req){
+        if(req[key] !== undefined && user.hasOwnProperty(key)){
+            user[key] = req[key]
+        }
+    }
+    return userDao.daoUpdateUser(user)
 }
