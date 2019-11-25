@@ -108,15 +108,16 @@ export async function daoGetUserById(id:number){
     }
 }
 
-export async function daoUpdateUser(newUser: User){
-    for(let u of users){
-        if(u.userId === newUser.userId){
-            u = newUser
-            return u
-        }
-    }
-    throw{
-        status: 404,
-        message: 'User not found'
+export async function daoUpdateUser(user: User){
+    
+    let client: PoolClient
+    client = await connectionPool.connect()
+
+    try{
+        await client.query('BEGIN')
+        await client.query('UPDATE project0.user SET username = $1, password = $2, first_name = $3, last_name = $4, email = $5 where user_id = $6',
+                            [user.username, user.password, user.firstName, user.lastName, user.email, user.userId])
+        await client.query('UPDATE project0.user_roles SET role_id = $1 WHERE user_id = $2',
+                            [user.roles.roleId, user.userId])
     }
 }

@@ -2,28 +2,28 @@ import { UserDTO } from "../dto-models/user";
 import { User } from "../models/user";
 
 
-export function userDTOtoUser(users: UserDTO[]): User{
+export function userDTOtoUser(uD: UserDTO[]): User{
     let roles = []
-    for(let user of users){
+    for(let user of uD){
         roles.push({
             roleId: user.role_id,
             role: user.role_title
         })
     }
     return new User(
-        users[0].user_id, 
-        users[0].username, 
-        users[0].password, 
-        users[0].first_name, 
-        users[0].last_name, 
-        users[0].email, 
+        uD[0].user_id, 
+        uD[0].username, 
+        uD[0].password, 
+        uD[0].first_name, 
+        uD[0].last_name, 
+        uD[0].email, 
         roles)
 }
 
-export function multipleUserDTOtoUser(users: UserDTO[]): User[]{
+export function multipleUserDTOtoUser(uD: UserDTO[]): User[]{
     let currentUser: UserDTO[] = []
     let result: User[] = []
-    for(let user of users){
+    for(let user of uD){
         if(currentUser.length === 0){
             currentUser.push(user)
         }

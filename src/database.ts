@@ -7,7 +7,7 @@ export let users:User[] = [{
         firstName: "",
         lastName: "",
         email: "",
-    role:{
+    roles:{
         roleId: 1,
         role:"Finance Manager",
     }
@@ -19,7 +19,7 @@ export let users:User[] = [{
         firstName: "",
         lastName: "",
         email: "",
-    role:{
+    roles:{
         roleId: 2,
         role: "Admin"
     }
@@ -31,7 +31,7 @@ export let users:User[] = [{
         firstName: "",
         lastName: "",
         email: "",
-    role:{
+    roles:{
         roleId: 3,
         role: "User"
     }

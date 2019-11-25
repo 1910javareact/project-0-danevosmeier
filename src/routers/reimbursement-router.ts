@@ -1,6 +1,7 @@
 import express from "express"
 import * as rServices from "../services/reimbursement-services"
 import { authorization } from "../middleware/auth-middleware"
+import { Reimbursement } from "../models/reimbursement"
 
 export const reimbursementRouter = express.Router()
 
@@ -36,25 +37,23 @@ reimbursementRouter.get('/author/userId/:userId', authorization([1]), async (req
     }
 })
 
-reimbursementRouter.post('', authorization([1,2,3]), async (req, res){
+reimbursementRouter.post('', async (req, res) => {
     let {body} = req
-    let singleReimbursement = {
-        author: req.session.user.userId,
-        amount: body.amount,
-        description: body.description,
-        type: body.type
-    }
-    for(let key in singleReimbursement){
-        if(!singleReimbursement[key]){
-            res.status(400).send('Please include all fields')
+    let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
+    for(let key in newReimbursement){
+        if(body[key] === undefined){
+            res.status(400).send('All fields are required for a reimbursement')
+            break
+        }
+        else{
+            newReimbursement[key] = body[key]
         }
     }
-    try{
-        let newReimbursement = await rServices.updateReimbursement(singleReimbursement)
-        res.status(201).json(newReimbursement)
+    if(rServices.saveOneReimbursement(newReimbursement)){
+        res.sendStatus(201)
     }
-    catch(e){
-        res.status(e.status).send(e.message)
+    else{
+        res.status(404).send('Reimbursement does not exist')
     }
 })
 

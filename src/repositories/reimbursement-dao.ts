@@ -135,7 +135,9 @@ export async function daoUpdateReimbursement(update: Reimbursement){
     try{
         client = await connectionPool.connect()
         let result = await client.query('UPDATE project_0.reimbursement SET date_resolved = now(), resolver = $1, status_id = $2 WHERE reimbursement_id = $3',
-                            [update.resolver, update.status, update.reimbursementId])
+                                [update.resolver, update.status, update.reimbursementId])
+        //the update will not return any rows
+        //need to find a way to check if the update was successful
         if(result.rows !== 0){
             return await daoGetReimbursementByReimbursementId(update.reimbursementId)
         }
