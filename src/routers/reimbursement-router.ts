@@ -57,7 +57,7 @@ reimbursementRouter.post('',[authorization(['finance-manager', 'admin', 'user'])
     let {body} = req
 
     let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
-
+    
     for(let key in newReimbursement){
 
         if(body[key] === undefined){
