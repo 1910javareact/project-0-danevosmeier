@@ -54,27 +54,33 @@ reimbursementRouter.get('/author/userId/:userId', [authorization(['finance-manag
 })
 
 reimbursementRouter.post('',[authorization(['finance-manager', 'admin', 'user'])], async (req, res) => {
+    
     let {body} = req
 
     let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
+        try{    
+            for(let key in newReimbursement){
+
+                if(body[key] === undefined){
+
+                    res.status(400).send('All fields are required for a reimbursement')
+                    break
+                }
+                else{
+                    newReimbursement[key] = body[key]
+                }
+            }
+            if(await rServices.saveOneReimbursement(newReimbursement)){
+                res.sendStatus(201)
+            }
+            else{
+                res.status(404).send('Reimbursement does not exist')
+            }
+        }
+        catch(e){
+            res.status(e.status).send(e.message)
+        }
     
-    for(let key in newReimbursement){
-
-        if(body[key] === undefined){
-
-            res.status(400).send('All fields are required for a reimbursement')
-            break
-        }
-        else{
-            newReimbursement[key] = body[key]
-        }
-    }
-    if(rServices.saveOneReimbursement(newReimbursement)){
-        res.sendStatus(201)
-    }
-    else{
-        res.status(404).send('Reimbursement does not exist')
-    }
 })
 
 reimbursementRouter.patch('', authorization(['finance-manager']), async (req, res)=>{

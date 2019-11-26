@@ -3,7 +3,7 @@ import { Reimbursement } from "../models/reimbursement";
 
 export async function getReimbursementByStatusId(id:number):Promise<Reimbursement[]>{
     try{
-        return daoR.daoReimbursementByStatusId(id)
+        return await daoR.daoReimbursementByStatusId(id)
     }
     catch(e){
         throw e
@@ -12,7 +12,7 @@ export async function getReimbursementByStatusId(id:number):Promise<Reimbursemen
 
 export async function getReimbursementByUserId(id:number):Promise<Reimbursement[]>{
     try{
-        return daoR.daoGetReimbursementByUserId(id)
+        return await daoR.daoGetReimbursementByUserId(id)
     }
     catch(e){
         throw e
@@ -21,7 +21,7 @@ export async function getReimbursementByUserId(id:number):Promise<Reimbursement[
 
 export async function saveOneReimbursement(reimbursement:Reimbursement):Promise<Reimbursement>{
     try{
-        return daoR.daoSaveOneReimbursement(reimbursement)
+        return await daoR.daoSaveOneReimbursement(reimbursement)
     }
     catch(e){
         throw e
@@ -30,7 +30,7 @@ export async function saveOneReimbursement(reimbursement:Reimbursement):Promise<
 
 export async function updateReimbursement(reimbursement:Reimbursement):Promise<Reimbursement>{
     try{
-        return daoR.daoUpdateReimbursement(reimbursement)
+        return await daoR.daoUpdateReimbursement(reimbursement)
      }
     catch(e){
         throw e
