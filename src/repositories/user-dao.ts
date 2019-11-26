@@ -11,7 +11,7 @@ export async function daoGetUserByUsernameAndPassword(username:string, password:
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_role NATURAL JOIN project0.role WHERE username = $1 AND password = $2',
+        let result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE username = $1 AND password = $2',
                                     [username, password])
         if(result.rowCount === 0){
             throw 'Invalid Credentials'
@@ -45,7 +45,7 @@ export async function daoGetAllUsers():Promise<User[]>{
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_role NATURAL JOIN project0.role')
+        let result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles')
         
         if(result.rowCount === 0){
             throw 'No Users Exist'
@@ -79,7 +79,7 @@ export async function daoGetUserById(id:number):Promise<User>{
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
+        let result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
                                     [id])
         if(result.rowCount === 0){
             throw 'User does not exist'
@@ -114,13 +114,13 @@ export async function daoUpdateUser(user: User):Promise<User>{
     try {
         await client.query('BEGIN');
         
-        await client.query('UPDATE project0.user SET username = $1, password = $2, first_name = $3, last_name = $4, email = $5 where user_id = $6',
+        await client.query('UPDATE project0.users SET username = $1, password = $2, firstname = $3, lastname = $4, email = $5 where user_id = $6',
                             [user.username, user.password, user.firstName, user.lastName, user.email, user.userId]);
         await client.query('UPDATE project0.user_roles SET role_id = $1 WHERE user_id = $2',
                             [user.role.roleId, user.userId]);
         await client.query('COMMIT');
         
-        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
+        let result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
                                         [user.userId]);
         if (result.rowCount === 0) {
             throw 'User does not exist';

@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 
 app.use(sessionMiddleware)
 
-app.post(`/login`, (req, res)=>{
+app.post(`/login`, async (req, res)=>{
     let {username, password} = req.body
 
     if(!username || !password){
@@ -19,7 +19,7 @@ app.post(`/login`, (req, res)=>{
     }
 
     try{
-        let user = getUserByUsernameAndPassword(username, password)
+        let user = await getUserByUsernameAndPassword(username, password)
         req.session.user = user
         res.json(user)
     }
