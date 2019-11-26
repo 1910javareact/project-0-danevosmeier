@@ -11,15 +11,27 @@ export function reimbursementDTOtoReimbursement(r: ReimbursementDTO[]):Reimburse
         r[0].date_resolved,
         r[0].description,
         r[0].resolver,
-        r[0].status_id,
-        r[0].type_id
+        r[0].status,
+        r[0].type
     )
 }
 
-export function multiReimbursementDTOtoReimbursement(r: ReimbursementDTO[]):Reimbursement[]{
-    let result = []
-    for(let reimbursement of r){
-        result.push(reimbursementDTOtoReimbursement([reimbursement]))
+export function multiReimbursementDTOtoReimbursement(rD: ReimbursementDTO[]):Reimbursement[]{
+    let currentR: ReimbursementDTO[] = []
+    let result: Reimbursement[] = []
+    for(let r of rD){
+        if(currentR.length ===  0){
+            currentR.push(r)
+        }
+        else if(currentR[0].reimbursement_id === r.reimbursement_id){
+            currentR.push(r)
+        }
+        else{
+            result.push(reimbursementDTOtoReimbursement(currentR))
+            currentR = []
+            currentR.push(r)
+        }
     }
+    result.push(reimbursementDTOtoReimbursement(currentR))
     return result
 }

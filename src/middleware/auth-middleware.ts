@@ -1,6 +1,6 @@
 
 
-export function authorization(roleIds: number[], userId?:boolean){
+export function authorization(authRoles: string[]){
 
     return (req, res, next)=>{
         let isAuth = false
@@ -9,19 +9,10 @@ export function authorization(roleIds: number[], userId?:boolean){
             res.status(401).send('Please Login')
             return
         }
-        if(roleIds.includes(req.session.user.role.roleId)){
+        if(authRoles.includes(req.session.user.role.role)){
                 isAuth = true
         }
         
-        if(userId){
-            let id = +req.params.id
-            if(!isNaN(id)){
-                if(req.session.user.userId === id){
-                    isAuth = true
-                }
-            }
-        }
-
         if(isAuth){
             next()
         }

@@ -1,7 +1,7 @@
 import * as daoR from "../repositories/reimbursement-dao"
 import { Reimbursement } from "../models/reimbursement";
 
-export async function getReimbursementByStatusId(id:number){
+export async function getReimbursementByStatusId(id:number):Promise<Reimbursement[]>{
     try{
         return daoR.daoReimbursementByStatusId(id)
     }
@@ -10,7 +10,7 @@ export async function getReimbursementByStatusId(id:number){
     }
 }
 
-export async function getReimbursementByUserId(id:number){
+export async function getReimbursementByUserId(id:number):Promise<Reimbursement[]>{
     try{
         return daoR.daoGetReimbursementByUserId(id)
     }
@@ -19,7 +19,7 @@ export async function getReimbursementByUserId(id:number){
     }
 }
 
-export async function saveOneReimbursement(reimbursement:Reimbursement){
+export async function saveOneReimbursement(reimbursement:Reimbursement):Promise<Reimbursement>{
     try{
         return daoR.daoSaveOneReimbursement(reimbursement)
     }
@@ -28,17 +28,10 @@ export async function saveOneReimbursement(reimbursement:Reimbursement){
     }
 }
 
-export async function updateReimbursement(reimbursement:Reimbursement):Promise<Reimbursement[]>{
+export async function updateReimbursement(reimbursement:Reimbursement):Promise<Reimbursement>{
     try{
-        let updatedReimbursement = daoR.daoReimbursementByStatusId(reimbursement.reimbursementId)
-
-        for(let key in reimbursement){
-            if(reimbursement[key] !== updatedReimbursement.hasOwnProperty[key]){
-                updatedReimbursement[key] = reimbursement[key]
-            }
-        }
-        return daoR.daoUpdateReimbursement(updatedReimbursement)
-    }
+        return daoR.daoUpdateReimbursement(reimbursement)
+     }
     catch(e){
         throw e
     }    

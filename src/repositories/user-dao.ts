@@ -1,18 +1,17 @@
-import { users } from "../database"
 import { User } from "../models/user"
 import { PoolClient } from "pg"
 import { connectionPool } from "."
 import { userDTOtoUser, multipleUserDTOtoUser } from "../util/userdto-to-user"
 
 
-export async function daoGetUserByUsernameAndPassword(username, password):Promise<User>{
+export async function daoGetUserByUsernameAndPassword(username:string, password:string):Promise<User>{
     
     let client: PoolClient
     
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project_0.user NATURAL JOIN project_0.user_role NATURAL JOIN project_0.role WHERE username = $1 and password = $2',
+        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_role NATURAL JOIN project0.role WHERE username = $1 AND password = $2',
                                     [username, password])
         if(result.rowCount === 0){
             throw 'Invalid Credentials'
@@ -22,7 +21,6 @@ export async function daoGetUserByUsernameAndPassword(username, password):Promis
         }
     }
     catch(e){
-        console.log(e);
         
         if(e === 'Invalid Credentials'){
             throw{
@@ -42,12 +40,13 @@ export async function daoGetUserByUsernameAndPassword(username, password):Promis
     }
 }
 
-export async function daoGetAllUsers(){
+export async function daoGetAllUsers():Promise<User[]>{
     let client: PoolClient
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project_0.user NATURAL JOIN project_0.user_role NATURAL JOIN project_0.role')
+        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_role NATURAL JOIN project0.role')
+        
         if(result.rowCount === 0){
             throw 'No Users Exist'
         }
@@ -58,7 +57,7 @@ export async function daoGetAllUsers(){
     catch(e){
         if(e === 'No Users Exist'){
             throw{
-                status: 400,
+                status: 404,
                 message: 'No Users Exist'
             }
         }
@@ -74,13 +73,13 @@ export async function daoGetAllUsers(){
     }
 }
 
-export async function daoGetUserById(id:number){
+export async function daoGetUserById(id:number):Promise<User>{
     let client: PoolClient
     
     try{
         client = await connectionPool.connect()
 
-        let result = await client.query('SELECT * FROM project_0.user NATURAL JOIN project_0.user_role NATURAL JOIN project_0.role WHERE user_id = $1',
+        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
                                     [id])
         if(result.rowCount === 0){
             throw 'User does not exist'
@@ -108,16 +107,37 @@ export async function daoGetUserById(id:number){
     }
 }
 
-export async function daoUpdateUser(user: User){
+export async function daoUpdateUser(user: User):Promise<User>{
     
     let client: PoolClient
-    client = await connectionPool.connect()
-
-    try{
-        await client.query('BEGIN')
+   
+    try {
+        await client.query('BEGIN');
+        
         await client.query('UPDATE project0.user SET username = $1, password = $2, first_name = $3, last_name = $4, email = $5 where user_id = $6',
-                            [user.username, user.password, user.firstName, user.lastName, user.email, user.userId])
+                            [user.username, user.password, user.firstName, user.lastName, user.email, user.userId]);
         await client.query('UPDATE project0.user_roles SET role_id = $1 WHERE user_id = $2',
-                            [user.roles.roleId, user.userId])
+                            [user.role.roleId, user.userId]);
+        await client.query('COMMIT');
+        
+        let result = await client.query('SELECT * FROM project0.user NATURAL JOIN project0.user_roles NATURAL JOIN project0.roles WHERE user_id = $1',
+                                        [user.userId]);
+        if (result.rowCount === 0) {
+            throw 'User does not exist';
+        }
+        else {
+            return userDTOtoUser(result.rows);
+        }
+    }   
+    catch(e){
+        await client.query('ROLLBACK')
+
+        throw{
+            status: 500,
+            message: 'Internal Server Error'
+        }
+    }
+    finally{
+        client && client.release()
     }
 }

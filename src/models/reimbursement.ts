@@ -24,23 +24,3 @@ export class  Reimbursement{
         this.type = type
     }
 }
-
-export class ReimbursementType{
-    typeId: number
-    type: string
-
-    constructor(typeId: number, type: string){
-        this.typeId = typeId
-        this.type = type
-    }
-}
-
-export class ReimbursementStatus{
-    statusId: number
-    status: string
-
-    constructor(statusId:number, status:string){
-        this.statusId = statusId
-        this.status = status
-    }
-}

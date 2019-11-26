@@ -4,33 +4,39 @@ import * as userServices from '../services/user-services'
 
 export const userRouter = express.Router()
 
+userRouter.get('', [authorization(['finance-manager'])], async (req, res) =>{
+    try{
+        let allUsers = await userServices.getAllUsers()
 
-//fix to only allow finance managers access
-async function controllerGetUsers(req, res){
-    let users = userServices.getAllUsers()
-    if(users){
-        res.json(users)
+        res.status(200).json(allUsers)
     }
-    else{
-        res.sendStatus(500)
+    catch(e){
+        res.status(e.status).send(e.message)
     }
-}
+})
 
-userRouter.get(``, [authorization([1]), controllerGetUsers])
-
-userRouter.get('/:id', [authorization[1]] ,async (req, res) =>{
+userRouter.get('/:id', [authorization(['finance-manager', 'admin', 'user'])] ,async (req, res) =>{
     const id = +req.params.id
     if(isNaN(id)){
         res.status(400).send('Invalid ID')
     }
+    else if(req.session.user.role.role === 'finance-manager'){
+        try{
+            let user = await userServices.getUserById(id)
+            res.status(200).json(user)
+        }
+        catch(e){
+            res.status(e.status).send(e.message)
+        }
+    }
     else{
         try{
-            let user = userServices.getUserById(id)
-            if(user){
-                res.json(user)
+            let user = await userServices.getUserById(id)
+            if(req.session.user.userId === user.userId){
+                res.status(200).json(user)
             }
             else{
-                res.status.send('Unable to find user')
+                res.status(404).send('Unable to find user')
             }
         }
         catch(e){
@@ -39,14 +45,18 @@ userRouter.get('/:id', [authorization[1]] ,async (req, res) =>{
     }
 })
 
-userRouter.patch('', [authorization([2])], async (req, res) =>{
+userRouter.patch('', [authorization(['admin'])], async (req, res) =>{
     try{
         let {body} = req
+
         let user = userServices.updateUser(body)
+        
         if(user){
+
             res.status(200).json(user)
         }
         else{
+            
             res.status(400).send('Unable to find user')
         }
     }
