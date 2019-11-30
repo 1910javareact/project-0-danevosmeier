@@ -1,0 +1,32 @@
+{
+  "name": "project-0-danevosmeier",
+  "version": "1.0.1",
+  "description": "Project 0 Take 2",
+  "main": "index.ts",
+  "scripts": {
+    "start": "nodemon --exec ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1910javareact/project-0-danevosmeier.git"
+  },
+  "author": "Dane Vosmeier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1910javareact/project-0-danevosmeier/issues"
+  },
+  "homepage": "https://github.com/1910javareact/project-0-danevosmeier#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pg": "^7.14.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/pg": "^7.11.2",
+    "nodemon": "^2.0.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.2"
+  }
+}
