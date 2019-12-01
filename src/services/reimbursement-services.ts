@@ -1,6 +1,15 @@
 import * as daoR from "../repositories/reimbursement-dao"
 import { Reimbursement } from "../models/reimbursement";
 
+export async function getAllReimbursements():Promise<Reimbursement[]>{
+    try{
+        return await daoR.daoGetAllReimbursements()
+    }
+    catch(e){
+        throw e
+    }
+}
+
 export async function getReimbursementByStatusId(id:number):Promise<Reimbursement[]>{
     try{
         return await daoR.daoReimbursementByStatusId(id)

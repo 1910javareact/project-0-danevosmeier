@@ -24,6 +24,8 @@ app.post(`/login`, async (req, res)=>{
         res.json(user)
     }
     catch(e){
+        console.log(e);
+        
         res.status(e.status).send(e.message)
     }
 })
@@ -34,7 +36,7 @@ app.use(`/reimbursements`, reimbursementRouter)
 
 
 
-app.listen(1985, ()=>{
+app.listen(1910, ()=>{
     console.log(`app has started`);
     
 })

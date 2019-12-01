@@ -1,8 +1,40 @@
 import { Reimbursement } from "../models/reimbursement";
 import { PoolClient } from "pg";
-import { connectionPool } from ".";
+import { connectionPool, schema } from ".";
 import { multiReimbursementDTOtoReimbursement, reimbursementDTOtoReimbursement } from "../util/reimbursementdto-to-reimbursement";
 
+
+export async function daoGetAllReimbursements():Promise<Reimbursement[]>{
+    let client: PoolClient
+    try{
+        client = await connectionPool.connect()
+        let result = await client.query(`select * from ${schema}.reimbursement`)
+
+        if(result.rowCount === 0){
+            throw 'No Reimbursements Exits'
+        }
+        else{
+            return multiReimbursementDTOtoReimbursement(result.rows)
+        }
+    }
+    catch(e){
+        if(e == 'No Reimbursements Exits'){
+            throw{
+                status: 404,
+                message: 'No Reimbursements Exits'
+            }
+        }
+        else{
+            throw{
+                status: 500,
+                message: 'Internal Server Error'
+            }
+        }
+    }
+    finally{
+        client && client.release()
+    }
+}
 
 
 export async function daoReimbursementByStatusId(statusId:number):Promise<Reimbursement[]>{
@@ -10,7 +42,7 @@ export async function daoReimbursementByStatusId(statusId:number):Promise<Reimbu
 
     try{
         client = await connectionPool.connect()
-        let result = await client.query('SELECT * FROM project0.reimbursement WHERE status = $1 ORDER BY date_submitted DESC',
+        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE status = $1 ORDER BY date_submitted DESC`,
                                 [statusId])
         if(result.rowCount === 0){
             throw `Reimbursement does not exist`
@@ -43,7 +75,7 @@ export async function daoGetReimbursementByUserId(userId:number):Promise<Reimbur
     
     try{
         client = await connectionPool.connect()
-        let result = await client.query('SELECT * FROM project0.reimbursement WHERE author = $1 ORDER BY date_submitted DESC',
+        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE author = $1 ORDER BY date_submitted DESC`,
                                     [userId])
         if(result.rowCount === 0){
             throw `No Reimbursement Found`

@@ -5,7 +5,7 @@ import { Reimbursement } from "../models/reimbursement"
 
 export const reimbursementRouter = express.Router()
 
-reimbursementRouter.get('/status/:statusId', [authorization(['finance-manager'])], async (req, res) =>{
+reimbursementRouter.get('/status/:statusId', [authorization(['FINANCE MANAGER'])], async (req, res) =>{
     
     let statusId = +req.params.statusId
     
@@ -23,17 +23,19 @@ reimbursementRouter.get('/status/:statusId', [authorization(['finance-manager'])
     }
 })
 
-reimbursementRouter.get('/author/userId/:userId', [authorization(['finance-manager', 'admin', 'user'])], async (req, res)=>{
+reimbursementRouter.get('/author/userId/:userId', [authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])], async (req, res)=>{
     let userId = +req.params.userId
     if(isNaN(userId)){
         res.status(400).send('Invalid ID')
     }
-    else if(req.seession.user.role.role === 'finance-manager'){
+    else if(req.session.user.role.role === 'FINANCE MANAGER'){
         try{
             let reimbursement = await rServices.getReimbursementByUserId(userId)
             res.status(200).json(reimbursement)
         }
         catch(e){
+            console.log(e);
+            
             res.status(e.status).send(e.message)
         }
     }
@@ -53,7 +55,7 @@ reimbursementRouter.get('/author/userId/:userId', [authorization(['finance-manag
     }
 })
 
-reimbursementRouter.post('',[authorization(['finance-manager', 'admin', 'user'])], async (req, res) => {
+reimbursementRouter.post('',[authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])], async (req, res) => {
     
     let {body} = req
 
@@ -83,7 +85,7 @@ reimbursementRouter.post('',[authorization(['finance-manager', 'admin', 'user'])
     
 })
 
-reimbursementRouter.patch('', authorization(['finance-manager']), async (req, res)=>{
+reimbursementRouter.patch('', authorization(['FINANCE MANAGER']), async (req, res)=>{
     try{
         let {body} = req
         
@@ -101,6 +103,17 @@ reimbursementRouter.patch('', authorization(['finance-manager']), async (req, re
         else{
             res.status(404).send(`Not found`)
         }
+    }
+    catch(e){
+        res.status(e.status).send(e.message)
+    }
+})
+
+reimbursementRouter.get('', authorization(['FINANCE MANAGER']), async (req, res) =>{
+    try{
+        let allReimbursements = await rServices.getAllReimbursements()
+
+        res.status(200).json(allReimbursements)
     }
     catch(e){
         res.status(e.status).send(e.message)

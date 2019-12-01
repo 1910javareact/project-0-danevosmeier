@@ -1,5 +1,7 @@
 import {Pool} from 'pg'
 
+export const schema = 'project0'
+
 export const connectionPool:Pool = new Pool({
     user: process.env['PROJECT0_USERNAME'],
     host: process.env['PROJECT0_HOST'],

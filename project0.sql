@@ -117,3 +117,18 @@ select * from project0.reimbursement;
 SELECT * FROM project0.reimbursement WHERE author = 2 ORDER BY date_submitted desc;
 					
 select * from reimbursement;
+
+
+-------------6/30
+
+UPDATE project0.users SET username = 'inga', "password" = 'password1', firstname = 'Inga', lastname = 'Schneider', email = 'inga@frankensteinneurology.com' WHERE user_id = 3;
+
+UPDATE project0.users_join_roles SET role_id = 2 WHERE user_id = 2;
+
+SELECT * FROM project0.users NATURAL JOIN project0.users_join_roles NATURAL JOIN project0.roles WHERE user_id = $1;
+
+SELECT * FROM users NATURAL JOIN users_join_roles NATURAL JOIN roles
+
+select * from reimbursement
+
+select * from reimbursement natural join reimbursement_type natural join reimbursement_status natural join status_join_reimbursement natural join type_join_reimbursement
