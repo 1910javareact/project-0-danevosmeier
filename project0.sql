@@ -34,7 +34,7 @@ create table reimbursement_type(
 
 create table reimbursement(
 	reimbursement_id serial primary key,
-    author int4 references users (user_id),
+    author int4 not null references users (user_id),
     amount numeric(10,2) not null,
     date_submitted text not null,
     date_resolved text not null,
@@ -96,6 +96,8 @@ select * from users;
 
 select * from users_join_roles;
 
+select * from reimbursement natural join users;
+
 select * from reimbursement;
 
 select * from reimbursement_status;
@@ -132,3 +134,21 @@ SELECT * FROM users NATURAL JOIN users_join_roles NATURAL JOIN roles
 select * from reimbursement
 
 select * from reimbursement natural join reimbursement_type natural join reimbursement_status natural join status_join_reimbursement natural join type_join_reimbursement
+
+INSERT INTO project0.reimbursement (author, amount, date_submitted, date_resolved, description, resolver, status, "type") 
+	values (2,100.00,11/7/19,11/21/19, 'Hotel',2, 1, 3);
+	
+SELECT * FROM project0.reimbursement WHERE reimbursement_id = 2;
+
+UPDATE project0.reimbursement SET status = 1, description = 'Hotel' WHERE reimbursement_id = 2
+
+SELECT * FROM users NATURAL JOIN users_join_roles NATURAL JOIN roles WHERE user_id = 1
+
+SELECT * FROM users WHERE user_id = 3
+
+UPDATE users SET username = 'doc', "password" = 'password2', firstname = 'Frederick', lastname = 'Frankenstein', email = 'vicmd@frankensteinneurology.com' WHERE user_id = 1
+
+UPDATE users_join_roles SET role_id = 1 WHERE user_id = 1
+
+select * from users natural join reimbursement
+

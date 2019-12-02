@@ -97,13 +97,7 @@ reimbursementRouter.patch('', authorization(['FINANCE MANAGER']), async (req, re
     try{
         let {body} = req
         
-        let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
-
-        newReimbursement.reimbursementId = body.reimbursementId
-
-        newReimbursement.status = body.status
-        
-        let update = await rServices.updateReimbursement(newReimbursement)
+        let update = await rServices.updateReimbursement(body)
 
         res.status(200).json(update)
     }
