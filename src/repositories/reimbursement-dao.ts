@@ -75,7 +75,7 @@ export async function daoGetReimbursementByUserId(userId:number):Promise<Reimbur
     
     try{
         client = await connectionPool.connect()
-        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE author = $1 ORDER BY date_submitted DESC`,
+        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE author = $1`,
                                     [userId])
         if(result.rowCount === 0){
             throw `No Reimbursement Found`
@@ -111,20 +111,14 @@ export async function daoSaveOneReimbursement(r:Reimbursement):Promise<Reimburse
         let holder = await client.query(`INSERT INTO ${schema}.reimbursement (reimbursement_id, author, amount, date_submitted, date_resolved, description, resolver, status, "type") values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
                             [r.reimbursementId, r.author, r.amount, r.dateSubmitted,r.dateResolved, r.description, r.resolver, r.status, r.type])
 
-        // let holder = await client.query(``)
-
         let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE reimbursement_id = $1`,
                                         [holder.rows[0].reimbursement_id])
-
-        console.log(result.rows);
         
-
         return reimbursementDTOtoReimbursement(result.rows)
     }
     catch(e){
         console.log(e);
         
-        client.query('ROLLBACK')
         throw{
             status: 500,
             message: 'Internal Server Error'
@@ -153,12 +147,6 @@ export async function daoUpdateReimbursement(update: Reimbursement):Promise<Reim
         else{
             return reimbursementDTOtoReimbursement(result.rows)
         }
-        
-        console.log(result.rows);
-        
-        
-        
-        
     }
     catch(e){
         console.log(e);
