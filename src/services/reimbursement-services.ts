@@ -33,8 +33,6 @@ export async function saveOneReimbursement(reimbursement:Reimbursement):Promise<
         return await daoR.daoSaveOneReimbursement(reimbursement)
     }
     catch(e){
-        console.log(e);
-        
         throw e
     }
 }

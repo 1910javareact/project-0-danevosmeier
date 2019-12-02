@@ -45,14 +45,16 @@ create table reimbursement(
 );
 
 create table status_join_reimbursement(
-	status_id int4 references reimbursement_status (status_id),
+	
 	reimbursement_id int4 references reimbursement (reimbursement_id),
+	status_id int4 references reimbursement_status (status_id),
 	constraint status_join_reimbursement_PK primary key (reimbursement_id, status_id)
 );
 
 create table type_join_reimbursement(
-	type_id int4 references reimbursement_type (type_id),
+	
 	reimbursement_id int4 references reimbursement(reimbursement_id),
+	type_id int4 references reimbursement_type (type_id),
 	constraint type_join_reimbursement_PK primary key (type_id, reimbursement_id)
 );
 
@@ -85,11 +87,17 @@ insert into users_join_roles
      	   (3,3);
 
 insert into reimbursement (author, amount, date_submitted, date_resolved, description, resolver, status, "type")
-	values(2, 200.00, '11/5/19', now(), 'Shovels', 3, 1, 4);
+	values(2, 200.00, '11/5/19', now(), 'Shovels', 3, 1, 4),
+	(1, 150.00, '10/7/19', '10/10/19', 'Hay', 3, 1, 2);
+	
+insert into project0.status_join_reimbursement
+	values (1, 1),
+		   (2, 1);
 
-insert into reimbursement (author, amount, date_submitted, date_resolved, description, resolver, status, "type")
-	values(1, 150.00, '10/7/19', '10/10/19', 'Hay', 3, 1, 2);
-	  
+insert into project0.type_join_reimbursement
+	values (1, 4),
+			(2, 2);
+
 select * from roles;
 
 select * from users;
@@ -119,6 +127,8 @@ select * from project0.reimbursement;
 SELECT * FROM project0.reimbursement WHERE author = 2 ORDER BY date_submitted desc;
 					
 select * from reimbursement;
+
+select * from 
 
 
 -------------6/30
@@ -152,3 +162,14 @@ UPDATE users_join_roles SET role_id = 1 WHERE user_id = 1
 
 select * from users natural join reimbursement
 
+select * from reimbursement natural join status_join_reimbursement natural join reimbursement_status
+
+select * from status_join_reimbursement
+
+select * from users_join_roles
+
+select * from reimbursement_status;
+
+select * from type_join_reimbursement
+
+select * from reimbursement;

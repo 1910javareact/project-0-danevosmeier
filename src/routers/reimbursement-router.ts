@@ -65,8 +65,11 @@ reimbursementRouter.post('',[authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])
     let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
         try{    
             for(let key in newReimbursement){
-
+                console.log(key);
+                
                 if(body[key] === undefined){
+                    console.log(body[key]);
+                    
 
                     res.status(400).send('All fields are required for a reimbursement')
                     break
@@ -79,15 +82,13 @@ reimbursementRouter.post('',[authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])
             let update = await rServices.saveOneReimbursement(newReimbursement)
 
             if(update){
-                res.status(201).send(update)
+                res.status(201).send('update')
             }
             else{
                 res.status(404).send('Reimbursement does not exist')
             }
         }
         catch(e){
-            console.log(e);
-            
             res.status(e.status).send(e.message)
         }
     

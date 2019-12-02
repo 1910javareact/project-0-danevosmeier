@@ -109,7 +109,7 @@ export async function daoSaveOneReimbursement(r:Reimbursement):Promise<Reimburse
         client = await connectionPool.connect()
 
         let holder = await client.query(`INSERT INTO ${schema}.reimbursement (reimbursement_id, author, amount, date_submitted, date_resolved, description, resolver, status, "type") values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-                            [r.reimbursementId, r.author, r.amount, r.dateSubmitted,r.dateResolved, r.description, r.resolver, r.status, r.type])
+                            [r.reimbursement_id, r.author, r.amount, r.date_submitted,r.date_resolved, r.description, r.resolver, r.status, r.type])
 
         let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE reimbursement_id = $1`,
                                         [holder.rows[0].reimbursement_id])
@@ -136,10 +136,10 @@ export async function daoUpdateReimbursement(update: Reimbursement):Promise<Reim
         client = await connectionPool.connect()
 
         await client.query(`UPDATE ${schema}.reimbursement SET author = $1, amount = $2, date_submitted = $3, date_resolved = $4, description = $5, resolver = $6, status = $7, type = $8 WHERE reimbursement_id = $9`,
-                            [update.author, update.amount, update.dateSubmitted, update.dateResolved, update.description, update.resolver, update.status, update.type, update.reimbursementId])
+                            [update.author, update.amount, update.date_submitted, update.date_resolved, update.description, update.resolver, update.status, update.type, update.reimbursement_id])
         
         let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE reimbursement_id = $1`,
-                                            [update.reimbursementId])
+                                            [update.reimbursement_id])
         
         if(result.rowCount === 0){
             throw 'Reimbursement does not exist'
