@@ -107,18 +107,21 @@ export async function daoSaveOneReimbursement(r:Reimbursement):Promise<Reimburse
     let client:PoolClient
     try{
         client = await connectionPool.connect()
-        await client.query(`BEGIN`)
-//#############
-        let holder = await client.query('INSERT INTO project0.reimbursement (author, amount, date_submitted, date_resolved, description, resolver, status_id, type_id) values ($1,$2,now(),$3,$4,null,1,$5)',
-                            [r.author, r.amount, '0001/01/01', r.description, r.type])
-//##############
-        let result = await client.query('SELECT * FROM project0.reimbursement WHERE reimbursement_id = $1',
+
+        let holder = await client.query(`INSERT INTO ${schema}.reimbursement (reimbursement_id, author, amount, date_submitted, date_resolved, description, resolver, status, "type") values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+                            [r.reimbursementId, r.author, r.amount, r.dateSubmitted,r.dateResolved, r.description, r.resolver, r.status, r.type])
+
+        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE reimbursement_id = $1`,
                                         [holder.rows[0].reimbursement_id])
-        await client.query('COMMIT')
+
+        console.log(result.rows);
+        
 
         return reimbursementDTOtoReimbursement(result.rows)
     }
     catch(e){
+        console.log(e);
+        
         client.query('ROLLBACK')
         throw{
             status: 500,
@@ -134,18 +137,22 @@ export async function daoUpdateReimbursement(update: Reimbursement):Promise<Reim
     let client:PoolClient
     
     try{
-        await client.query('BEGIN')
+        client = await connectionPool.connect()
 
-        await client.query('UPDATE project0.reimbursement SET status = $1, description = $3 WHERE reimbursement_id = $2',
-                            [update.status, update.reimbursementId])
+        await client.query(`UPDATE ${schema}.reimbursement SET reimbursement_id = $1, author = $2, amount = $3, date_submitted = $4, date_resolved = $5, description = $6, resolver = $7, status = $8, type = $9 WHERE reimbursement_id = $10`,
+                            [update.reimbursementId, update.author, update.amount, update.dateSubmitted, update.dateResolved, update.description, update.resolver, update.status, update.type, update.reimbursementId])
         
-        let result = await client.query('SELECT * FROM project0.reimbursement WHERE reimbursement_id = $1',
-                                        [update.reimbursementId])
-        await client.query('COMMIT')
+        let result = await client.query(`SELECT * FROM ${schema}.reimbursement WHERE reimbursement_id = $1`,
+                                            [update.reimbursementId])
+        
+        console.log(result.rows);
+        
         return reimbursementDTOtoReimbursement(result.rows)
+        
+        
     }
     catch(e){
-        await client.query('ROLLBACK')
+        console.log(e);
 
         throw{
             status: 500,

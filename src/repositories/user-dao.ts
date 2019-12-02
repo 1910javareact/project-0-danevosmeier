@@ -22,6 +22,8 @@ export async function daoGetUserByUsernameAndPassword(username:string, password:
         }
     }
     catch(e){
+        console.log(e);
+        
         
         if(e === 'Invalid Credentials'){
             throw{
@@ -92,6 +94,7 @@ export async function daoGetUserById(id:number):Promise<User>{
         }
     }
     catch(e){
+        console.log(e);
         if(e === 'User does not exist'){
             throw{
                 status: 404,
@@ -115,25 +118,29 @@ export async function daoUpdateUser(user: User):Promise<User>{
     let client: PoolClient
    
     try {
-        await client.query('BEGIN');
+        client = await connectionPool.connect();
         
-        await client.query(`UPDATE ${schema}.users SET username = $1, "password" = $2, firstname = $3, lastname = $4, email = $5 WHERE user_id = $6;`,
+        await client.query(`UPDATE ${schema}.users SET username = $1, "password" = $2, firstname = $3, lastname = $4, email = $5 WHERE user_id = $6`,
                             [user.username, user.password, user.firstName, user.lastName, user.email, user.userId]);
-        await client.query(`UPDATE ${schema}.users_join_roles SET role_id = $1 WHERE user_id = $2`,
-                            [user.role.roleId, user.userId]);
-        await client.query(`COMMIT`);
         
         let result = await client.query(`SELECT * FROM ${schema}.users NATURAL JOIN ${schema}.users_join_roles NATURAL JOIN ${schema}.roles WHERE user_id = $1`,
                                         [user.userId]);
         if (result.rowCount === 0) {
+            console.log(result.rowCount);
+            
             throw 'User does not exist';
+            
+            
         }
         else {
+            console.log(result.rows);
+            
             return userDTOtoUser(result.rows);
         }
     }   
     catch(e){
-        await client.query('ROLLBACK')
+
+        console.log(e);
 
         throw{
             status: 500,

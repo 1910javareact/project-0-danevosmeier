@@ -18,6 +18,8 @@ reimbursementRouter.get('/status/:statusId', [authorization(['FINANCE MANAGER'])
             res.status(200).json(reimbursements)
         }
         catch(e){
+            console.log(e);
+            
             res.status(e.status).send(e.message)
         }
     }
@@ -50,13 +52,14 @@ reimbursementRouter.get('/author/userId/:userId', [authorization(['FINANCE MANAG
             }
         }
         catch(e){
+            console.log(e);
+            
             res.status(e.status).send(e.message)
         }
     }
 })
 
 reimbursementRouter.post('',[authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])], async (req, res) => {
-    
     let {body} = req
 
     let newReimbursement = new Reimbursement(0,0,0,0,0,'',0,0,0)
@@ -72,14 +75,19 @@ reimbursementRouter.post('',[authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])
                     newReimbursement[key] = body[key]
                 }
             }
-            if(await rServices.saveOneReimbursement(newReimbursement)){
-                res.sendStatus(201)
+
+            let update = await rServices.saveOneReimbursement(newReimbursement)
+
+            if(update){
+                res.status(201).send(update)
             }
             else{
                 res.status(404).send('Reimbursement does not exist')
             }
         }
         catch(e){
+            console.log(e);
+            
             res.status(e.status).send(e.message)
         }
     
@@ -97,14 +105,11 @@ reimbursementRouter.patch('', authorization(['FINANCE MANAGER']), async (req, re
         
         let update = await rServices.updateReimbursement(newReimbursement)
 
-        if(update){
-            res.status(200).json(update)
-        }
-        else{
-            res.status(404).send(`Not found`)
-        }
+        res.status(200).json(update)
     }
     catch(e){
+        console.log(e);
+        
         res.status(e.status).send(e.message)
     }
 })
@@ -116,6 +121,8 @@ reimbursementRouter.get('', authorization(['FINANCE MANAGER']), async (req, res)
         res.status(200).json(allReimbursements)
     }
     catch(e){
+        console.log(e);
+        
         res.status(e.status).send(e.message)
     }
 })

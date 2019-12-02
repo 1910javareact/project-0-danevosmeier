@@ -11,7 +11,7 @@ userRouter.get('', [authorization(['FINANCE MANAGER'])], async (req, res) =>{
         res.status(200).json(allUsers)
     }
     catch(e){
-        
+        console.log(e);
         res.status(e.status).send(e.message)
     }
 })
@@ -28,6 +28,7 @@ userRouter.get('/:id', [authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])] ,as
             res.status(200).json(user)
         }
         catch(e){
+            console.log(e);
             res.status(e.status).send(e.message)
         }
     }
@@ -42,6 +43,7 @@ userRouter.get('/:id', [authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])] ,as
             }
         }
         catch(e){
+            console.log(e);
             res.status(e.status).send(e.message)
         }
     }
@@ -51,7 +53,7 @@ userRouter.patch('', [authorization(['ADMIN'])], async (req, res) =>{
     try{
         let {body} = req
 
-        let user = userServices.updateUser(body)
+        let user = await userServices.updateUser(body)
         
         if(user){
 
@@ -63,6 +65,8 @@ userRouter.patch('', [authorization(['ADMIN'])], async (req, res) =>{
         }
     }
     catch(e){
+        console.log(e);
+        
         res.status(e.status).send(e.message)
     }
 })

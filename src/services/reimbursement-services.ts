@@ -33,6 +33,8 @@ export async function saveOneReimbursement(reimbursement:Reimbursement):Promise<
         return await daoR.daoSaveOneReimbursement(reimbursement)
     }
     catch(e){
+        console.log(e);
+        
         throw e
     }
 }
@@ -42,6 +44,8 @@ export async function updateReimbursement(reimbursement:Reimbursement):Promise<R
         return await daoR.daoUpdateReimbursement(reimbursement)
      }
     catch(e){
+        console.log(e);
+        
         throw e
     }    
 }

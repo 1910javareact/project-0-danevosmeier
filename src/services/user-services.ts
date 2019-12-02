@@ -7,6 +7,8 @@ export async function getUserByUsernameAndPassword(username:string, password:str
         return await userDao.daoGetUserByUsernameAndPassword(username, password)
     }
     catch(e){
+        console.log(e);
+        
         throw e
     }
 }
@@ -16,6 +18,7 @@ export async function getAllUsers():Promise<User[]>{
         return await userDao.daoGetAllUsers()
     }
     catch(e){
+        console.log(e);
         throw e
     }
 }
@@ -25,6 +28,7 @@ export async function getUserById(id: number):Promise<User>{
         return await userDao.daoGetUserById(id)
     }
     catch(e){
+        console.log(e);
         throw e
     }
 }
@@ -41,6 +45,8 @@ export async function updateUser(user: User):Promise<User>{
         return await userDao.daoUpdateUser(user)
     }
     catch(e){
+        console.log(e);
+        
         throw e
     }
 }
