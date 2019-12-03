@@ -173,3 +173,15 @@ select * from reimbursement_status;
 select * from type_join_reimbursement
 
 select * from reimbursement;
+
+create user new_user with password 'password1';
+
+grant all privileges on all tables in schema project0 to new_user;
+
+select * from pg_catalog.pg_user;
+
+select * from project0.users
+
+select * from user_sys_privs;
+
+drop user new_user;
