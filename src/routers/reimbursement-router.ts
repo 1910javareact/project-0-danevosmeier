@@ -44,7 +44,7 @@ reimbursementRouter.get('/author/userId/:userId', [authorization(['FINANCE MANAG
     else{
         try{
             let reimbursement = await rServices.getReimbursementByUserId(userId)
-            if(req.seession.user.userId === reimbursement[0].author){
+            if(req.session.user.userId === reimbursement[0].author){
                 res.status(200).json(reimbursement)
             }
             else{
