@@ -1,0 +1,99 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+<html>
+    <head>
+        <title>User Info</title>
+    </head>
+
+    <body>
+
+        <table id="user">
+            <!-- Make a table dynamically with JS -->
+
+            <colgroup>
+                <col id="keys">
+                <col id="values">
+            </colgroup>
+
+            <!--Filler data for now
+                Can always replace text later with js
+            -->
+            <tbody>
+                <tr id="userId">
+                    <td id="lblUserId">UserID</td>
+                    <td id="txtUserId">0</td>
+                </tr>
+
+                <tr id="username">
+                    <td id="lblUsername">Username</td>
+                    <td id="txtUsername">username</td>
+                </tr>
+
+                <tr id="password">
+                    <td id="lblPassword">Password</td>
+                    <td id="txtPassword">password</td>
+                </tr>
+
+                <tr id="firstName">
+                    <td id="lblFirstName">First Name</td>
+                    <td id="txtFirstName">John</td>
+                </tr>
+
+                <tr id="lastName">
+                    <td id="lblLastName">Last Name</td>
+                    <td id="txtLastName">Smith</td>
+                </tr>
+
+                <tr id="email">
+                    <td id="lblEmail">Email</td>
+                    <td id="txtEmail">john.smith@work.com</td>
+                </tr>
+
+                <tr id="role">
+                    <td id="lblRole">Role</td>
+                    <td id="txtRole">User</td>
+                </tr>
+                
+            </tbody>
+
+        </table>
+
+        <!-- Make into a link for updating user -->
+        <input type="button" value="Update" id="update" name="update">
+
+
+
+
+
+        <!-- <p id="lblUserId">
+            User ID
+            <input type="text" name="txtUserId" id="txtUserId">
+        </p>
+
+        <p id="lblUsername">
+            Username
+            <input type="text" id="txtUsername" name="txtUsername">
+        </p>
+
+        <p id="lblPassword">
+            Password
+            <input type="password" name="txtPassword" id="txtPassword">
+        </p>
+
+        <p id="lblFirstName">
+            First Name
+            <input type="text" name="txtFirstName" id="txtFirstName">
+        </p>
+
+        <p id="lblLastName">
+            Last Name
+            <input type="text" name="txtLastName" id="txtLastName">
+        </p>
+
+        <p id="lblEmail">
+            Email
+            <input type="email" name="txtEmail" id="txtEmail" placeholder="you@somewhere.com">
+        </p> -->
+    </body>
+</html>
