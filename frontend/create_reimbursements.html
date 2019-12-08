@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+
+
+
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        
+        <title>Create Reimbursment</title>
+    </head>
+
+    <body>
+        <form action="savereimbursement.php" method="post" id="save_reimbursement">
+            <fieldset id="reimbursement_id">
+                <p>Reimbursement ID <input type="number" name="txt_reimbursement_id" id="txt_reimbursement_id"></p>
+            </fieldset>
+
+            <fieldset id="author">
+                <p>Author <input type="number" name="txt_author" id="txt_author"></p>
+            </fieldset>
+
+            <fieldset id="amount">
+                <p>Amount <input type="number" name="txt_amount" id="txt_amount"></p>
+            </fieldset>
+
+            <!-- number, text, or date for date -->
+            <fieldset id="date_submitted">
+                <p>Date Submitted <input type="number" name="txt_date_submitted" id="txt_date_submitted"></p>
+            </fieldset>
+
+            <fieldset id="date_resolved">
+                <p>Date Resolved <input type="number" name="" id=""></p>
+            </fieldset>
+
+            <fieldset id="description">
+                <p>Description <input type="text" name="txt_description" id="txt_description"></p>
+            </fieldset>
+
+            <fieldset id="resolver">
+                <p>Resolver <input type="number" name="txt_resolver" id="txt_resolver"></p>
+            </fieldset>
+
+            <fieldset id="status">
+                <p>Status <input type="number" name="txt_status" id="txt_status"></p>
+            </fieldset>
+
+            <fieldset id="type">
+                <p>Type <input type="number" name="txt_type" id="txt_type"></p>
+            </fieldset>
+
+            <input type="submit" value="Submit" id="btn_submit">
+        </form>
+    </body>
+
+</html>
