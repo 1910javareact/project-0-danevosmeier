@@ -4,10 +4,13 @@ import { getUserByUsernameAndPassword } from './services/user-services';
 import { userRouter } from './routers/user-router';
 import {sessionMiddleware} from './middleware/session-middleware'
 import { reimbursementRouter } from './routers/reimbursement-router';
+import { corsFilter } from './middleware/cors-middleware';
 
 const app = express()
 
 app.use(bodyParser.json())
+
+app.use(corsFilter)
 
 app.use(sessionMiddleware)
 
