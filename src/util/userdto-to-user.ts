@@ -1,11 +1,10 @@
 import { UserDTO } from "../dto-models/user";
 import { User } from "../models/user";
-import { Role } from "../models/role";
 
 
 export function userDTOtoUser(uD: UserDTO[]): User{
     
-    let role = new Role(uD[0].role_id, uD[0].role_name);
+    let role = []
     return new User(
         uD[0].user_id, 
         uD[0].username, 
