@@ -1,46 +1,41 @@
-import express from 'express'
-import bodyParser from 'body-parser';
-import { getUserByUsernameAndPassword } from './services/user-services';
+import express from 'express';
+import bodyparser from 'body-parser';
+import { loggingMiddleware } from './middleware/logging-middleware';
+import { sessionMiddleware } from './middleware/session-middleware';
 import { userRouter } from './routers/user-router';
-import {sessionMiddleware} from './middleware/session-middleware'
-import { reimbursementRouter } from './routers/reimbursement-router';
-import { corsFilter } from './middleware/cors-middleware';
+import { getUserByUsernameAndPassword } from './services/user-service';
+import { reimRouter } from './routers/reim-router';
+import { corsLocal } from './middleware/cors-middleware';
 
-const app = express()
+const app = express();
 
-app.use(bodyParser.json())
+app.use(bodyparser.json());
 
-app.use(corsFilter)
+app.use(corsLocal);
 
-app.use(sessionMiddleware)
+app.use(loggingMiddleware);
 
-app.post(`/login`, async (req, res)=>{
-    let {username, password} = req.body
+app.use(sessionMiddleware);
 
-    if(!username || !password){
-        res.status(400).send(`Invalid Credentials`)
+app.use('/users', userRouter);
+
+app.use('/reimbursements', reimRouter);
+
+app.post('/login', async (req, res) => {
+    const {username, password} = req.body;
+    if (!username || !password ) {
+        res.status(400).send('please have a username and password field');
+    } else {
+    try {
+        const user = await getUserByUsernameAndPassword(username, password);
+        req.session.user = user;
+        res.json(user);
+    } catch (e) {
+        res.status(e.status).send(e.message);
     }
+}
+});
 
-    try{
-        let user = await getUserByUsernameAndPassword(username, password)
-        req.session.user = user
-        res.json(user)
-    }
-    catch(e){
-        console.log(e);
-        
-        res.status(e.status).send(e.message)
-    }
-})
-
-app.use(`/users`, userRouter)
-
-app.use(`/reimbursements`, reimbursementRouter)
-
-
-
-app.listen(1910, ()=>{
-    console.log(`app has started`);
-    
-})
-
+app.listen(1910, () => {
+    console.log('App has started');
+});

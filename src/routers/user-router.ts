@@ -1,73 +1,64 @@
-import express from 'express'
-import { authorization } from '../middleware/auth-middleware'
-import * as userServices from '../services/user-services'
+import express from 'express';
+import { User } from '../models/user';
+import { getAllUsers, saveOneUser, getUserById, updateUser } from '../services/user-service';
+// import { authorization } from '../middleware/auth-middleware';
 
-export const userRouter = express.Router()
+export const userRouter = express.Router();
 
-userRouter.get('', [authorization(['FINANCE MANAGER'])], async (req, res) =>{
-    try{
-        let allUsers = await userServices.getAllUsers()
-
-        res.status(200).json(allUsers)
+async function controllerGetUsers(req, res) {
+    try {
+        const user = await getAllUsers();
+        res.json(user);
+    } catch (e) {
+        res.status(e.status).send(e.message);
     }
-    catch(e){
-        console.log(e);
-        res.status(e.status).send(e.message)
-    }
-})
+}
 
-//could probably go with no authorization and be the same
-userRouter.get('/:id', [authorization(['FINANCE MANAGER', 'ADMIN', 'USER'])] ,async (req, res) =>{
-    const id = +req.params.id
-    if(isNaN(id)){
-        res.status(400).send('Invalid ID')
-    }
-    else if(req.session.user.role.role === 'FINANCE MANAGER'){
-        try{
-            let user = await userServices.getUserById(id)
-            res.status(200).json(user)
+userRouter.get('', //[authorization(1),
+               controllerGetUsers);
+
+userRouter.get('/:id', async (req, res) => {
+    const id = +req.params.id;
+    if (isNaN(id)) {
+        res.sendStatus(400);
+    } else {
+        try {
+            const user = await getUserById(id);
+            res.json(user);
+        } catch (e) {
+            res.status(e.status).send(e.message);
         }
-        catch(e){
-            console.log(e);
-            res.status(e.status).send(e.message)
-        }
+
     }
-    else{
-        try{
-            let user = await userServices.getUserById(id)
-            if(req.session.user.userId === user.userId){
-                res.status(200).json(user)
-            }
-            else{
-                res.status(404).send('Unable to find user')
-            }
-        }
-        catch(e){
-            console.log(e);
-            res.status(e.status).send(e.message)
+});
+
+userRouter.post('', //[authorization(1 || 2),
+async (req, res) => {
+    const { body } = req;
+    const newU = new User(0, '', '', '', '', '', 0);
+    for (const key in newU) {
+        if (body[key] === undefined) {
+            res.status(400).send('Please include all user fields');
+            break;
+        } else {
+            newU[key] = body[key];
         }
     }
-})
-
-userRouter.patch('', [authorization(['ADMIN'])], async (req, res) =>{
-    try{
-        let {body} = req
-
-        let user = await userServices.updateUser(body)
-        
-        if(user){
-
-            res.status(200).json(user)
-        }
-        else{
-            
-            res.status(400).send('Unable to find user')
-        }
+    try {
+        const user = await saveOneUser(newU);
+        res.status(201).json(user);
+    } catch (e) {
+        res.status(e.status).send(e.message);
     }
-    catch(e){
-        console.log(e);
-        
-        res.status(e.status).send(e.message)
-    }
-})
+});
 
+userRouter.patch('', //[authorization(1),
+async (req, res) => {
+    try {
+        const {body} = req;
+        const user = await updateUser(body);
+        res.status(200).json(user);
+    } catch (e) {
+        res.status(e.status).send(e.message);
+    }
+});
