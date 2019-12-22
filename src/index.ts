@@ -1,41 +1,45 @@
-import express from 'express';
-import bodyparser from 'body-parser';
-import { loggingMiddleware } from './middleware/logging-middleware';
-import { sessionMiddleware } from './middleware/session-middleware';
-import { userRouter } from './routers/user-router';
-import { getUserByUsernameAndPassword } from './services/user-service';
-import { reimRouter } from './routers/reim-router';
-import { corsLocal } from './middleware/cors-middleware';
+import express from 'express'
+import bodyparser from 'body-parser'
+import { userRouter } from './routers/user-router'
+import { getUserByUsernameAndPassword } from './services/user-services'
+import { sessionMiddleware } from './middleware.ts/session-middleware'
+import { reimbursementsRouter } from './routers/reimbursement-router'
+import { corsFilter } from './middleware.ts/cors-middleware'
 
-const app = express();
 
-app.use(bodyparser.json());
+const app = express()  //this line builds the application from express
 
-app.use(corsLocal);
 
-app.use(loggingMiddleware);
+app.use(bodyparser.json())
+app.use(sessionMiddleware)
+app.use(corsFilter)
 
-app.use(sessionMiddleware);
+app.use('/users', userRouter)
+app.use('/reimbursement', reimbursementsRouter)
 
-app.use('/users', userRouter);
 
-app.use('/reimbursements', reimRouter);
+//login
+app.post('/login', async (req,res)=>{
+    let {username, password} = req.body;
+    if(!username || !password ){
+        res.status(400).send('Invalid credentials')
+    } else{
 
-app.post('/login', async (req, res) => {
-    const {username, password} = req.body;
-    if (!username || !password ) {
-        res.status(400).send('please have a username and password field');
-    } else {
-    try {
-        const user = await getUserByUsernameAndPassword(username, password);
-        req.session.user = user;
-        res.json(user);
-    } catch (e) {
-        res.status(e.status).send(e.message);
+    try{
+        let user = await getUserByUsernameAndPassword(username, password)
+        req.session.user = user
+        res.json(user)//its standard to send the logged in user info after the log in
+    }catch(e){
+        res.status(e.status).send(e.message)
     }
-}
-});
+    }
+})
 
-app.listen(1910, () => {
-    console.log('App has started');
-});
+
+//now we need to make the server actually run
+//this means the server has to be listening for requests
+app.listen(1910, ()=>{
+    console.log('app has started');   
+})
+
+

@@ -1,90 +1,32 @@
 import { User } from '../models/user';
 import { PoolClient } from 'pg';
-import { connectionPool, schema } from '.';
-import { multiUserDTOConvertor, userDTOtoUser } from '../util/Userdto-to-user';
+import { connectionPool } from '.';
+import { userDTOtoUser, multiUserDTOtoUser } from '../util/userdto-to-user';
 
-export async function daoGetAllUsers(): Promise<User[]> {
-    let client: PoolClient;
-    try {
-        client = await connectionPool.connect();
-        const result = await client.query(`SELECT * FROM ${schema}.users NATURAL JOIN ${schema}.users_join_roles NATURAL JOIN ${schema}.roles`);
-        return multiUserDTOConvertor(result.rows);
-    } catch (e) {
-        console.log(e);
-        throw {
-            status: 500,
-            message: 'Internal Server Error'
-        };
-    } finally {
-        client && client.release();
-    }
-}
 
-export async function daoSaveOneUser(u: User): Promise<User> {
-    let client: PoolClient;
-    client = await connectionPool.connect();
-    try {
-        await client.query('BEGIN');
-        const result = await client.query('INSERT INTO project0.user (username, "password", firstname, lastname, email, "role") values ($1,$2,$3,$4,$5,$6) RETURNING userid',
-        [u.username, u.password, u.firstName, u.lastName, u.email, u.role]);
-        await client.query('COMMIT');
-        return userDTOtoUser(result.rows);
-    } catch (e) {
-        await client.query('ROLLBACK');
-        throw {
-            status: 500,
-            message: 'Internal Server Error'
-        };
-    } finally {
-        client && client.release();
-    }
-}
-
-export async function daoGetUserById(userid: number): Promise<User> {
-    let client: PoolClient;
-    try {
-        client = await connectionPool.connect();
-        const result = await client.query(`SELECT * FROM ${schema}.users NATURAL JOIN ${schema}.users_join_roles NATURAL JOIN ${schema}.roles WHERE user_id = $1`,
-                                            [userid]);
-        if (result.rowCount > 0) {
-            return userDTOtoUser(result.rows);
-        } else {
-            throw 'No Such User';
-        }
-    } catch (e) {
-        if (e === 'No Such User') {
-            throw {
-                status: 404,
-                message: 'this user does not exist'
-            };
-        } else {
-            throw  {
-                status: 500,
-                message: 'Internal Server Error'
-            };
-        }
-    }
-}
+// checking if there is a user with a username and password that match the user's login input, 
 
 export async function daoGetUserByUsernameAndPassword(username: string, password: string): Promise<User> {
     let client: PoolClient;
     try {
         client = await connectionPool.connect();
-        const result = await client.query(`SELECT * FROM ${schema}.users NATURAL JOIN ${schema}.users_join_roles NATURAL JOIN ${schema}.roles WHERE username = $1 and "password" = $2`,
-                                            [username, password]);
+
+        const result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.users_roles NATURAL JOIN project0.roles WHERE username = $1 and password = $2',
+            [username, password]);
         if (result.rowCount === 0) {
-            throw 'bad credentials';
+            throw 'Invalid Credentials';
         } else {
             return userDTOtoUser(result.rows);
         }
     } catch (e) {
         console.log(e);
-        if (e === 'bad credentials') {
-            throw {
+
+        if (e === 'Invalid Credentials') {
+            throw{
                 status: 401,
-                message: 'Bad credentials'
+                message: 'Invalid Credentials'
             };
-        } else {
+        } else {            
             throw {
                 status: 500,
                 message: 'Internal Server Error'
@@ -94,13 +36,82 @@ export async function daoGetUserByUsernameAndPassword(username: string, password
         client && client.release();
     }
 }
+
+// here we are getting all users from the database
+
+export async function daoGetUsers() {
+    let client: PoolClient;
+    try {
+        client = await connectionPool.connect();
+
+        const result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.users_roles NATURAL JOIN project0.roles ORDER BY user_id');
+        if (result.rowCount === 0) {
+            throw 'No users in database';
+        } else {
+            return multiUserDTOtoUser(result.rows);
+        }
+    } catch (e) {
+        if (e === 'No users in database') {
+            throw{
+                status: 400,
+                message: 'No user found in database'
+            };
+        } else {
+            throw{
+                status: 500,
+                message: 'Internal Server Error'
+            };
+        }
+    } finally {
+        client && client.release();
+    }
+}
+
+// getting a user from the database by Id
+export async function daoGetUserById(id: number) {
+    let client: PoolClient;
+    try {
+        client = await connectionPool.connect();
+        const result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.users_roles NATURAL JOIN project0.roles WHERE user_id = $1',
+                                        [id]);
+        if (result.rowCount === 0) {
+            throw 'User does not exist';
+        } else {
+
+            return userDTOtoUser(result.rows);
+        }
+    } catch (e) {
+        if (e === 'User does not exist') {
+            throw{
+                status: 404,
+                message: 'Cannot find the user'
+            };
+        } else {
+            throw{
+                status: 500,
+                message: 'Internal Server Error'
+            };
+        }
+    } finally {
+        client && client.release();
+    }
+}
+
+// updating a user in the database 
+
 export async function daoUpdateUser(newUser: User) {
     let client: PoolClient;
     try {
         client = await connectionPool.connect();
         client.query('BEGIN');
-        await client.query(`UPDATE ${schema}.users SET username = $1, "password" = $2, firstname = $3, lastname = $4, email = $5 WHERE user_id = $6`,
-                            [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, newUser.userId]);
+        await client.query('update project0.users set username = $1, password = $2, firstname = $3, lastname = $4, email = $5 where user_id = $6',
+            [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, newUser.userId]);
+        await client.query('delete from project0.users_roles where user_id = $1',
+            [newUser.userId]);
+        for ( const role of newUser.roles) {
+            await client.query('insert into project0.users_roles values ($1,$2)',
+            [newUser.userId, role.roleId]);  
+        }
         client.query('COMMIT');
     } catch (e) {
         client.query('ROLLBACK');
@@ -109,6 +120,13 @@ export async function daoUpdateUser(newUser: User) {
             message: 'Internal Server Error'
         };
     } finally {
-        client.release();
+        client && client.release();
     }
 }
+
+
+
+
+
+// const result = await client.query('SELECT * FROM project0.users NATURAL JOIN project0.users_roles NATURAL JOIN project0.roles WHERE user_id = $1',
+        //     [newUser.roles]);

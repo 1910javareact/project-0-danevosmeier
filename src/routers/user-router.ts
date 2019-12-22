@@ -1,64 +1,64 @@
-import express from 'express';
-import { User } from '../models/user';
-import { getAllUsers, saveOneUser, getUserById, updateUser } from '../services/user-service';
-// import { authorization } from '../middleware/auth-middleware';
+import express from 'express'
+import { authorization } from '../middleware.ts/auth-middleware'
+import * as userServices from '../services/user-services'
 
-export const userRouter = express.Router();
 
-async function controllerGetUsers(req, res) {
+export const userRouter = express.Router()
+
+
+userRouter.get('',  [authorization([2])], 
+async (req,res) =>{
     try {
-        const user = await getAllUsers();
-        res.json(user);
-    } catch (e) {
-        res.status(e.status).send(e.message);
+    let users = await userServices.getUsers()       
+        res.json(users)
+    } catch (e){
+        res.sendStatus(500)
     }
-}
+})
 
-userRouter.get('', //[authorization(1),
-               controllerGetUsers);
+//An example of not using arrow functions
 
-userRouter.get('/:id', async (req, res) => {
-    const id = +req.params.id;
-    if (isNaN(id)) {
-        res.sendStatus(400);
-    } else {
-        try {
-            const user = await getUserById(id);
-            res.json(user);
-        } catch (e) {
-            res.status(e.status).send(e.message);
+// async function controllerGetUsers(req, res){
+//     let users = await userServices.getUsers()
+//     if(users){        
+//         res.json(users)
+//     }else{
+//         res.sendStatus(500)
+//     }
+
+// }
+
+// userRouter.get('',  [authorization([2]), controllerGetUsers])
+
+
+userRouter.get('/:id', async (req,res)=>{
+    let id = +req.params.id
+    if(isNaN(id)){
+        res.sendStatus(400).send('Invalid ID')
+    }else{
+        try{
+            let user = await userServices.getUserById(id)
+            res.json(user)
+        }catch(e){
+            console.log(e);
+            
+            res.status(e.status).send(e.message)
         }
-
+        
     }
-});
+})
 
-userRouter.post('', //[authorization(1 || 2),
-async (req, res) => {
-    const { body } = req;
-    const newU = new User(0, '', '', '', '', '', 0);
-    for (const key in newU) {
-        if (body[key] === undefined) {
-            res.status(400).send('Please include all user fields');
-            break;
-        } else {
-            newU[key] = body[key];
-        }
-    }
-    try {
-        const user = await saveOneUser(newU);
-        res.status(201).json(user);
-    } catch (e) {
-        res.status(e.status).send(e.message);
-    }
-});
 
-userRouter.patch('', //[authorization(1),
-async (req, res) => {
+userRouter.patch('', [authorization([1])], async (req, res) => {
     try {
         const {body} = req;
-        const user = await updateUser(body);
-        res.status(200).json(user);
-    } catch (e) {
+        const update = await userServices.updateUser(body);
+        res.status(200).json(update);
+    }catch (e) {
         res.status(e.status).send(e.message);
     }
 });
+
+
+
+
