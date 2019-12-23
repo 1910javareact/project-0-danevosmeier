@@ -43,7 +43,7 @@ reimbursementsRouter.get('/author/userId/:userId', authorization([1], true),
     })
 
 //submitting a reimbursement
-reimbursementsRouter.post('', authorization([1, 2, 3]), 
+reimbursementsRouter.post('', authorization([1, 2, 3], true), 
     async (req, res) => {
         let { body } = req
         let post = {
